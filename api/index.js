@@ -59,7 +59,7 @@ app.post('/api/refresh', (req, res) => {
 // * Gerando um token de acesso
 const generateAcessToken = (user) => {
   return jwt.sign({ id: user.id, isAdmin: user.isAdmin }, 'mySecretKey', {
-    expiresIn: '30s'
+    expiresIn: '2m'
   });
 };
 
@@ -122,6 +122,13 @@ app.delete('/api/users/:userId', verify, (req, res) => {
   } else {
     res.status(403).json('You are not allowed to delete this user!');
   }
+});
+
+//* Rota de logout
+app.post('/api/logout', verify, (req, res) => {
+  const refreshToken = req.body.token;
+  refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
+  res.status(200).json('You logged out successfully.');
 });
 
 //* Definindo porta da aplicação
