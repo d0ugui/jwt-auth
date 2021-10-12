@@ -1,6 +1,6 @@
-<div style="text-align: center">
+<!-- <div style="text-align: center">
   <img align="center" src="src/assets/tela.gif" alt="Tesla UI">
-</div>
+</div> -->
 
 ## 📖 Projeto
 
