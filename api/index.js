@@ -22,6 +22,52 @@ const users = [
   }
 ];
 
+let refreshTokens = [];
+
+//* Rota de criação de novo token de acesso e refresh token
+app.post('/api/refresh', (req, res) => {
+  //* Captura o refresh token do usuário
+  const refreshToken = req.body.token;
+
+  //* Mensagem de erro (token inválido ou não existe)
+  if (!refreshToken) return res.status(401).json('You are not authenticated!');
+  if (!refreshTokens.includes(refreshToken)) {
+    return res.status(403).json('Refresh Token is not valid!');
+  }
+
+  //* Verificando erro e removendo refreshToken do mock
+  jwt.verify(refreshToken, 'myRefreshSecretKey', (err, user) => {
+    err && console.log(err);
+    refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
+
+    //* Criando novo acess token e refresh token
+    const newAcessToken = generateAcessToken(user);
+    const newRefreshToken = generateRefreshToken(user);
+
+    //* Colocando o novo refresh token dentro do mock
+    refreshTokens.push(newRefreshToken);
+
+    res.status(200).json({
+      acessToken: newAcessToken,
+      refreshToken: newRefreshToken
+    });
+  });
+
+  //* Se verdadeiro, criar novo token de acesso, refresh token e enviar ao usuário
+});
+
+// * Gerando um token de acesso
+const generateAcessToken = (user) => {
+  return jwt.sign({ id: user.id, isAdmin: user.isAdmin }, 'mySecretKey', {
+    expiresIn: '30s'
+  });
+};
+
+// * Gerando um refresh token
+const generateRefreshToken = (user) => {
+  return jwt.sign({ id: user.id, isAdmin: user.isAdmin }, 'myRefreshSecretKey');
+};
+
 //* Criando rota de login
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
@@ -32,12 +78,18 @@ app.post('/api/login', (req, res) => {
   });
 
   if (user) {
-    //* Gerando um token de acesso
-    const acessToken = jwt.sign({ id: user.id, isAdmin: user.isAdmin }, 'mySecretKey');
+    //* Chamando as funções responsáveis por gerar os tokens
+    const acessToken = generateAcessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    //* Após gerar o refresh token, colocando o dentro do mock
+    refreshTokens.push(refreshToken);
+
     res.json({
       username: user.username,
       isAdmin: user.isAdmin,
-      acessToken
+      acessToken,
+      refreshToken
     });
   } else {
     res.status(400).json('Username or password incorrect!');
