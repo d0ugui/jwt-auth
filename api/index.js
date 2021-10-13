@@ -40,15 +40,15 @@ app.post('/api/refresh', (req, res) => {
     err && console.log(err);
     refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
 
-    //* Criando novo acess token e refresh token
-    const newAcessToken = generateAcessToken(user);
+    //* Criando novo access token e refresh token
+    const newAccessToken = generateAccessToken(user);
     const newRefreshToken = generateRefreshToken(user);
 
     //* Colocando o novo refresh token dentro do mock
     refreshTokens.push(newRefreshToken);
 
     res.status(200).json({
-      acessToken: newAcessToken,
+      accessToken: newAccessToken,
       refreshToken: newRefreshToken
     });
   });
@@ -57,9 +57,9 @@ app.post('/api/refresh', (req, res) => {
 });
 
 // * Gerando um token de acesso
-const generateAcessToken = (user) => {
+const generateAccessToken = (user) => {
   return jwt.sign({ id: user.id, isAdmin: user.isAdmin }, 'mySecretKey', {
-    expiresIn: '2m'
+    expiresIn: '5s'
   });
 };
 
@@ -79,7 +79,7 @@ app.post('/api/login', (req, res) => {
 
   if (user) {
     //* Chamando as funções responsáveis por gerar os tokens
-    const acessToken = generateAcessToken(user);
+    const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
     //* Após gerar o refresh token, colocando o dentro do mock
@@ -88,7 +88,7 @@ app.post('/api/login', (req, res) => {
     res.json({
       username: user.username,
       isAdmin: user.isAdmin,
-      acessToken,
+      accessToken,
       refreshToken
     });
   } else {
