@@ -1,5 +1,5 @@
 <div style="text-align: center">
-  <img align="center" src="src/assets/tela.gif" alt="jwt-auth">
+  <img align="center" src="assets/tela.gif" alt="jwt-auth">
 </div>
 
 ## 📖 Projeto
