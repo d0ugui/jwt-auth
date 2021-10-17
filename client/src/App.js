@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
+
 import { GlobalStyle } from './styles/GlobalStyle';
+import { Container, Form, Button, Title, Negative, Success } from './styles/App';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -70,44 +72,46 @@ function App() {
   return (
     <div className="container">
       {user ? (
-        <div className="home">
-          <span>
+        <Container>
+          <Title>
             Welcome to the <b>{user.isAdmin ? 'admin' : 'user'}</b> dashboard{' '}
             <b>{user.username}</b>.
-          </span>
+          </Title>
           <span>Delete Users:</span>
-          <button className="deleteButton" onClick={() => handleDelete(1)}>
+          <Button className="deleteButton" onClick={() => handleDelete(1)}>
             Delete dougui
-          </button>
-          <button className="deleteButton" onClick={() => handleDelete(2)}>
+          </Button>
+          <Button className="deleteButton" onClick={() => handleDelete(2)}>
             Delete nocrazzy
-          </button>
+          </Button>
           {error && (
-            <span className="error">You are not allowed to delete this user!</span>
+            <Negative className="error">
+              You are not allowed to delete this user!
+            </Negative>
           )}
           {success && (
-            <span className="success">User has been deleted successfully...</span>
+            <Success className="success">User has been deleted successfully...</Success>
           )}
-        </div>
+        </Container>
       ) : (
-        <div className="login">
-          <form onSubmit={handleSubmit}>
-            <span className="formTitle">Lama Login</span>
+        <Container>
+          <Form onSubmit={handleSubmit}>
+            <span className="formTitle">Login</span>
             <input
               type="text"
-              placeholder="username"
+              placeholder="Username"
               onChange={(e) => setUsername(e.target.value)}
             />
             <input
               type="password"
-              placeholder="password"
+              placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
             />
             <button type="submit" className="submitButton">
               Login
             </button>
-          </form>
-        </div>
+          </Form>
+        </Container>
       )}
       <GlobalStyle />
     </div>
